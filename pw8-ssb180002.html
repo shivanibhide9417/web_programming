@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>PW8</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+     
+      #map {
+        height: 100%;
+      }
+    
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+
+
+<body>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBcWhzcS0fRqtT4czOHzFBfbw4PqiIhnk4&libraries=places">
+  </script>
+
+  <div><input id="searchbox" class="controls" type="text" placeholder="Search Box"><button name="show" onclick="initMap()">search</button></div>
+
+  <div id="map"></div>
+
+  <script type="text/javascript">
+      var map;
+      var places;
+      var input = document.getElementById('searchbox');
+      var searchBox = new google.maps.places.SearchBox(input);
+
+         searchBox.addListener('places_changed', function() {
+           places = searchBox.getPlaces();
+          if (places.length == 0)
+           {
+            return;
+           }
+          });
+        
+      function initMap() 
+      {
+        var center= places[0].geometry.location;
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: center,
+          zoom: 15
+        });
+
+        var request=
+        {
+          location:center,
+          radius:1500,
+          types:['restaurant']
+        };
+
+        var service=new google.maps.places.PlacesService(map);
+        service.nearbySearch(request,callback);
+      }
+
+    function callback(results,status)
+    {
+      if(status==google.maps.places.PlacesServiceStatus.OK)
+      {
+        for(var i=0;i<results.length;i++)
+        {
+          createMarker(results[i]);        
+      }
+    }
+  }
+
+    function createMarker(place)
+    {
+      var placeLoc=place.geometry.location;
+      var marker=new google.maps.Marker({
+        map:map,
+        position:place.geometry.location
+      });
+    }
+    </script>
+  </body>
+</html>
